@@ -211,3 +211,41 @@ For sap ui5 tooling, run the command add to add the mobile library to dependenci
 ```
     ui5 add sap.m
 ```
+
+#### Step4: XML Views 
+
+The usage of XML view allow us to seperate the UI logic from Application Logic by declaring its own controller. 
+
+Add a new folder named `views` in the webapp folder and create a file named `App.view.xml`
+
+View declaration. 
+
+```xml
+<mvc:View
+   xmlns="sap.m"
+   xmlns:mvc="sap.ui.core.mvc">
+</mvc:View>
+```
+
+Inside the view content, add the declarative definition for the Text control. 
+
+```xml
+<mvc:View
+   xmlns="sap.m"
+   xmlns:mvc="sap.ui.core.mvc">
+   <Text text="Text from XML View"/>
+</mvc:View>
+```
+
+Adjust the code in the `index.ts` file to instantiate the xml view instead of Text control. 
+
+```js
+import XMLView from "sap/ui/core/mvc/XMLView";
+
+XMLView.create({
+    viewName: "ui5.walkthrough.views.App"
+}).then((view) => {
+    view.placeAt("content");
+})
+```
+

@@ -1,3 +1,7 @@
-import Text from "sap/m/Text";
+import XMLView from "sap/ui/core/mvc/XMLView";
 
-new Text({ text: "Text from Index.ts"}).placeAt("content");
+XMLView.create({
+    viewName: "ui5.walkthrough.views.App"
+}).then((view) => {
+    view.placeAt("content");
+})
