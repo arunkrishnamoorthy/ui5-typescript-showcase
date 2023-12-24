@@ -302,4 +302,24 @@ Notes:
 5. controller names must use the typescript extension. `*.controller.ts`
 
 
+#### Step 6: Modules 
+
+The resources in ui5 are often referred to as Modules. In this step we replace the Javascript alert message with a proper
+message toast from ui5. 
+
+Add the following code in the controller. 
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import MessageToast from "sap/m/MessageToast";
+/**
+ * @name ui5.walkthrough.controller.App
+ */
+export default class AppController extends Controller {
+
+    onPress(): void {
+        MessageToast.show("This is a message from UI5 message toast");
+    }
+}
+```
 
