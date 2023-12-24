@@ -1,0 +1,27 @@
+{
+  "name": "ui5-typescript-showcase",
+  "version": "1.0.0",
+  "description": "In this series of tutorials, i will take you throught the Typescript mode of development.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ui5 serve -o index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arunkrishnamoorthy/ui5-typescript-showcase.git"
+  },
+  "keywords": [
+    "ui5",
+    "typescript"
+  ],
+  "author": "Arun Krishnamoorthy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arunkrishnamoorthy/ui5-typescript-showcase/issues"
+  },
+  "homepage": "https://github.com/arunkrishnamoorthy/ui5-typescript-showcase#readme",
+  "devDependencies": {
+    "@ui5/cli": "^3.8.0"
+  }
+}
