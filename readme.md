@@ -249,3 +249,57 @@ XMLView.create({
 })
 ```
 
+#### Step5: Adding controllers to the application. 
+
+In the webapp folder create a new folder named `controller` and create a controller file with the same name as the view. 
+
+`App.controller.ts`
+
+In the controller file, extend the sap standard controller from `sap.ui.core.mvc.Controller` and extend the class. 
+
+```js
+import Controller from "sap/ui/core/mvc/Controller";
+
+/**
+ * @name ui5.walkthrough.controller.App
+ */
+export default class AppController extends Controller {
+
+    onPress(): void {
+        alert("Text from controller");
+    }
+}
+```
+
+Reference the controller in the XML view using the `controllerName` attribute. 
+
+```xml
+<mvc:View
+   xmlns="sap.m"
+   xmlns:mvc="sap.ui.core.mvc"
+   controllerName="ui5.walkthrough.controller.App">
+   <Text text="Text from XML View"/>
+</mvc:View>
+```
+
+In the xml view add a button controller and assign the onPress event created in the controller to the press event of the button. 
+
+```xml
+<mvc:View
+   xmlns="sap.m"
+   xmlns:mvc="sap.ui.core.mvc"
+   controllerName="ui5.walkthrough.controller.App">
+   <Text text="Text from XML View"/>
+   <Button text="Hello" press="onPress" />
+</mvc:View>
+```
+
+Notes: 
+1. Controller names are Capitalized
+2. All controllers are in controller folder. 
+3. 1..1 relationship between view and controller. 
+4. Event handlers are prefixed with `on`
+5. controller names must use the typescript extension. `*.controller.ts`
+
+
+
