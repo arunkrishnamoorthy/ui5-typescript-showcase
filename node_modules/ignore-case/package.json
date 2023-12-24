@@ -1,0 +1,35 @@
+{
+    "name": "ignore-case",
+    "version": "0.1.0",
+    "description": "A JavaScript micro library that provides case-insensitive string helpers",
+    "keywords": [
+      "string",
+      "case",
+      "case-insensitive",
+      "util"
+    ],
+    "bugs": {
+        "url": "https://github.com/nickuraltsev/ignore-case/issues"
+    },
+    "license": "MIT",
+    "author": {
+        "name": "Nick Uraltsev",
+        "email": "nick.uraltsev@gmail.com"
+    },
+    "main": "lib/index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nickuraltsev/ignore-case.git"
+    },
+    "devDependencies": {
+      "jasmine": "^2.4.1",
+      "eslint": "^2.2.0",
+      "istanbul": "^0.4.2",
+      "coveralls": "^2.11.8"
+    },
+    "scripts": {
+      "test": "jasmine",
+      "coverage": "istanbul cover --root lib --report lcovonly jasmine",
+      "lint": "eslint lib spec"
+    }
+}
