@@ -174,3 +174,40 @@ server:
   - name: ui5-middleware-livereload
     afterMiddleware: compression
 ```
+
+#### Step3: Controls 
+
+To add the type definitions to the typescript, we need to import a types packages for the Open UI5. 
+
+For Open UI5:
+
+```
+npm install @types/openui5 --save-dev
+```
+
+For SAP UI5: 
+```
+npm install @types/sapui5 --save-dev
+```
+
+Replace the code in the index.ts file 
+
+```
+import Text from "sap/m/Text";
+
+new Text({ text: "Text from Index.ts"}).placeAt("content");
+```
+
+Also modify the index.html page body to have a placeholder for content. 
+
+```html
+<body>
+    <div id="content" class="sapUiBody"></div>
+</body>
+```
+
+For sap ui5 tooling, run the command add to add the mobile library to dependencies
+
+```
+    ui5 add sap.m
+```
