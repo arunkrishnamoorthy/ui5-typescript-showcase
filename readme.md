@@ -1096,3 +1096,177 @@ File: `App.view.xml`
 ```
 
 The output still remains the same. We have only modified the content from one view to another and nested the views. 
+
+#### Step 16: Dialog and Fragments 
+
+Fragments are lightweight and can be reused across the views. It does not have a controller of its own . 
+
+in the views folder, create a fragment name `HelloDialog.fragment.xml` with following content. 
+
+```xml
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
+    <Dialog id="helloDialog" title="Hello {/receipient/name}">
+    </Dialog>
+</core:FragmentDefinition>
+```
+
+Add a text for button in `i18n` file.
+
+```txt
+buttonTextWithDialog = Open with Dialog
+```
+
+In the HelloPanel view, add a button to trigger the dialog open. 
+
+```xml 
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    controllerName="ui5.walkthrough.controller.HelloPanel"
+    displayBlock="true"
+>
+    <Panel
+        headerText="{i18n>panelHeader}"
+        class="sapUiResponsiveMargin"
+        width="auto"
+    >
+        <Button
+            text="{i18n>buttonTextWithDialog}"
+            press="onPressWithDialog"
+            class="sapUiSmallMarginEnd myCustomButton"
+        />
+        <Button
+            text="{i18n>buttonText}"
+            press="onPress"
+            class="sapUiSmallMarginEnd myCustomButton"
+        />
+        <Input
+            value="{/recipient/name}"
+            valueLiveUpdate="true"
+            width="60%"
+        />
+        <Text
+            text="Hello {/recipient/name}"
+            class="sapUiSmallMargin myCustomText sapThemeHighlight-asColor"
+        />
+    </Panel>
+</mvc:View>
+```
+
+Add the event handler in the HelloPanel controller file. 
+
+```ts
+    onPressWithDialog() : void {
+        
+    }
+```
+
+Add the following logic to import the dialog and instantiate them. 
+
+1. Import the dialog and Create a global private variable that takes a promise which returns a dialog. 
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import MessageToast from "sap/m/MessageToast";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
+import Dialog from "sap/m/Dialog";
+
+/**
+ * @name ui5.walkthrough.controller.HelloPanel
+ */
+export default class HelloPanel extends Controller {
+
+    private dialogPromise: Promise<Dialog>;
+
+    onInit(): void {
+        const data = {
+            recipient: {
+                name : "Ricky"
+            }
+        };
+        const model = new JSONModel(data);
+        this.getView()?.setModel(model);
+    }
+
+
+    onPress(): void {
+        const recipient = (<JSONModel>this.getView()?.getModel())?.getProperty('/recipient/name');
+        const resourceBundle = <ResourceBundle>(<ResourceModel>this.getView()?.getModel("i18n")).getResourceBundle();
+        const message = resourceBundle.getText("messageText", [recipient]) || "no text defined";
+        MessageToast.show(message);              
+    }
+
+    onPressWithDialog() : void {
+    
+    }
+  
+}
+```
+
+
+2. Check for the dialog promise and load the dialog. 
+
+```ts
+    onPressWithDialog() : void {
+        if(!this.dialogPromise) {
+            this.dialogPromise = <Promise<Dialog>>this.loadFragment({
+                name: "ui5.walkthrough.views.HelloDialog"
+            });
+        }
+        this.dialogPromise.then((dialog) => {
+            dialog.open();
+        })
+    }
+```
+
+Final code of hello panel controller. 
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import MessageToast from "sap/m/MessageToast";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
+import Dialog from "sap/m/Dialog";
+
+/**
+ * @name ui5.walkthrough.controller.HelloPanel
+ */
+export default class HelloPanel extends Controller {
+
+    private dialogPromise: Promise<Dialog>;
+
+    onInit(): void {
+        const data = {
+            recipient: {
+                name : "Ricky"
+            }
+        };
+        const model = new JSONModel(data);
+        this.getView()?.setModel(model);
+    }
+
+
+    onPress(): void {
+        const recipient = (<JSONModel>this.getView()?.getModel())?.getProperty('/recipient/name');
+        const resourceBundle = <ResourceBundle>(<ResourceModel>this.getView()?.getModel("i18n")).getResourceBundle();
+        const message = resourceBundle.getText("messageText", [recipient]) || "no text defined";
+        MessageToast.show(message);              
+    }
+
+    onPressWithDialog() : void {
+        if(!this.dialogPromise) {
+            this.dialogPromise = <Promise<Dialog>>this.loadFragment({
+                name: "ui5.walkthrough.views.HelloDialog"
+            });
+        }
+        this.dialogPromise.then((dialog) => {
+            dialog.open();
+        })
+    }
+  
+}
+```
+

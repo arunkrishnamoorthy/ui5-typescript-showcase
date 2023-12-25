@@ -10,6 +10,11 @@
         width="auto"
     >
         <Button
+            text="{i18n>buttonTextWithDialog}"
+            press="onPressWithDialog"
+            class="sapUiSmallMarginEnd myCustomButton"
+        />
+        <Button
             text="{i18n>buttonText}"
             press="onPress"
             class="sapUiSmallMarginEnd myCustomButton"
