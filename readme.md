@@ -368,3 +368,156 @@ In the view, lets add an input control and and bind the data.
 </mvc:View>
 ```
 
+#### Step 8: Translatable Texts
+
+i18n - short name of internationalization
+i18n uses similar syntax to data binding, but without the /
+
+To add the i18n texts, create a folder named `i18n` in the webapp folder. in that folder, create a file named 
+`i18n.properties`.
+
+Add the following lines in the i18n.properties file. 
+
+```text
+buttonText = Say Hello 
+messageText = Hello {0}
+```
+
+The `{0}` represents the placeholder. 
+
+The file `i18n.properties` defaults to english language, where for other language file, you create a file with same name but with the extension of the language code. For example, for dutch, you create a file named `i18n_nl.properties` where `nl` is the dutch language code.
+
+In the `onInit` of the controller instantiate the resource module.
+
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import MessageToast from "sap/m/MessageToast";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
+
+/**
+ * @name ui5.walkthrough.controller.App
+ */
+export default class AppController extends Controller {
+
+    onInit(): void {
+        const data = {
+            recipient: {
+                name : "Ricky"
+            }
+        };
+        const model = new JSONModel(data);
+        this.getView()?.setModel(model);
+
+        const resourceModel = new ResourceModel({
+            bundleName: "ui5.walkthrough.i18n.i18n"
+        });
+        this.getView()?.setModel(resourceModel,"i18n");
+    }
+
+
+    onPress(): void {
+        MessageToast.show("This is a message from UI5 message toast");
+    }
+}
+```
+
+only one model can be a default model, so the resource model is referenced with the name `i18n` and the same will be used in the bindings. 
+
+In the view bind the button text from the i18n model.
+
+```xml
+<mvc:View
+   xmlns="sap.m"
+   xmlns:mvc="sap.ui.core.mvc"
+   controllerName="ui5.walkthrough.controller.App">
+   <Button text="{i18n>buttonText}" press="onPress" />
+   <Input value="{/recipient/name}" valueLiveUpdate="true"></Input>
+</mvc:View>
+```
+
+During on press event, in the message, to fill the place holder we will need the reference of the ResourceBundle. 
+With the help of resource bundle we will form the text by filling placeholder and raise the message. do the following modification in the controller. 
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import MessageToast from "sap/m/MessageToast";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
+
+/**
+ * @name ui5.walkthrough.controller.App
+ */
+export default class AppController extends Controller {
+
+    onInit(): void {
+        const data = {
+            recipient: {
+                name : "Ricky"
+            }
+        };
+        const model = new JSONModel(data);
+        this.getView()?.setModel(model);
+
+        const resourceModel = new ResourceModel({
+            bundleName: "ui5.walkthrough.i18n.i18n"
+        });
+        this.getView()?.setModel(resourceModel,"i18n");
+    }
+
+
+    onPress(): void {
+        const model = this.getView()?.getModel() as JSONModel;
+        const recipient = model.getProperty('/recipient/name');
+        const resourceModel = this.getView()?.getModel("i18n") as ResourceModel;
+        const resourceBundle = resourceModel.getResourceBundle() as ResourceBundle;
+        const message = resourceBundle.getText("messageText", [recipient]) || "no text defined";
+        MessageToast.show(message);
+    }
+}
+```
+
+Alternate way of referencing types in typescript. 
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import MessageToast from "sap/m/MessageToast";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
+
+/**
+ * @name ui5.walkthrough.controller.App
+ */
+export default class AppController extends Controller {
+    onInit(): void {
+        const data = {
+            recipient: {
+                name : "Ricky"
+            }
+        };
+        const model = new JSONModel(data);
+        this.getView()?.setModel(model);
+        const resourceModel = new ResourceModel({
+            bundleName: "ui5.walkthrough.i18n.i18n"
+        });
+        this.getView()?.setModel(resourceModel,"i18n");
+    }
+    onPress(): void {
+        const recipient = (<JSONModel>this.getView()?.getModel())?.getProperty('/recipient/name');
+        const resourceBundle = <ResourceBundle>(<ResourceModel>this.getView()?.getModel("i18n")).getResourceBundle();
+        const message = resourceBundle.getText("messageText", [recipient]) || "no text defined";
+        MessageToast.show(message);              
+    }
+}
+```
+
+Notes:
+1. Resource models are called i18n model 
+2. Default file name is i18n.properties 
+3. Bundle keys are written in lowerCase (recommendation)
+4. Bundle values can contains place holder like {0}, {1}, .. and so on. 
+5. Do not concatenate strings, always use placeholders
+6. Use unicode escape sequence for special characters. 
