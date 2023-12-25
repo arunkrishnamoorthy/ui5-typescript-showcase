@@ -1676,3 +1676,88 @@ In the XML view, reference the formatter function in the path binding.
 </mvc:XMLView>
 ```
 
+#### Step 24: Filtering
+
+In this step, we will perform client side filtering by adding a search bar to the list toolbar. 
+
+Modify the list control in the InvoiceList view with the following code. Add id to list control to read it back.
+
+```xml
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="ui5.walkthrough.controller.InvoiceList">
+    <List 
+        headerText="{i18n>invoiceListTitle}"
+        class="sapUiResponsiveMargin"
+        width="auto"
+        items="{invoice>/Invoices}"
+         id="invoiceList"
+    >
+        <headerToolbar>
+            <Toolbar>
+                <Title text="{i18n>invoiceListTitle}"></Title>
+                <ToolbarSpacer></ToolbarSpacer>
+                <SearchField 
+                    width="50%"
+                    search=".onFilterInvoices"
+                ></SearchField>
+            </Toolbar>
+        </headerToolbar>
+        <items>
+            <ObjectListItem title="{invoice>Quantity} x {invoice>ProductName}"
+                            number="{
+                                parts: [
+                                    'invoice>ExtendedPrice',
+                                    'view>/currency'
+                                ],
+                                type: 'sap.ui.model.type.Currency',
+                                formatOptions: {
+                                    showMeasure: false
+                                }
+                            }"
+                            numberUnit="{view>/currency}"
+                            numberState="{= ${invoice>ExtendedPrice} > 50 ? 'Error' : 'Success' }">
+                <firstStatus>
+                    <ObjectStatus text="{ path: 'invoice>Status', formatter: '.formatter.statusText' }"></ObjectStatus>
+                </firstStatus>
+            </ObjectListItem>
+        </items>
+    </List>
+</mvc:XMLView>
+```
+
+Implement the handler `onFilterInvoices` in the InvoiceList controller. 
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import formatter from "../model/formatter";
+import { SearchField$SearchEvent } from "sap/m/SearchField";
+import Filter from "sap/ui/model/Filter";
+import FilterOperator from "sap/ui/model/FilterOperator";
+import ListBinding from "sap/ui/model/ListBinding";
+/**
+ * @name ui5.walkthrough.controller.InvoiceList
+ */
+export default class InvoiceList extends Controller {
+
+    public formatter = formatter;
+
+    onInit(): void {
+        const currencyModel = new JSONModel({
+            currency: "EUR"
+        });
+        this.getView()?.setModel(currencyModel,"view");
+    }
+
+    onFilterInvoices(event: SearchField$SearchEvent): void {
+        const filter = [];
+        const query = event.getParameter("query");
+        if(query) {
+            filter.push(new Filter("ProductName",FilterOperator.Contains,query));
+        }
+        const list = this.byId("invoiceList");
+        const binding = <ListBinding>list?.getBinding("items");
+        binding?.filter(filter);
+    }
+}
+```
+
