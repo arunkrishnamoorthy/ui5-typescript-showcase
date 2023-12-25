@@ -813,3 +813,44 @@ now that we specified the root view in the manifest we no longer need to create 
 
 In the bootstrapping script, do the changes to remove the index module and load the Component support from sap.ui.core. 
 
+#### Step 11: Pages and Panel
+
+In this step we will replace the root view (App) with the page and panel container. 
+We add displayBlock = "true" 
+App Container and Page inside the app container aggregation. 
+And panel inside the page aggregation. 
+
+```xml
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    controllerName="ui5.walkthrough.controller.App"
+    displayBlock="true"
+>
+    <App>
+        <pages>
+            <Page title="{i18n>pageTitle}">
+                <Panel headerText="{i18n>panelHeader}">
+                    <Button
+                        text="{i18n>buttonText}"
+                        press="onPress"
+                    />
+                    <Input
+                        value="{/recipient/name}"
+                        valueLiveUpdate="true"
+                    />
+                </Panel>
+            </Page>
+        </pages>
+    </App>
+</mvc:View>
+
+```
+
+Also define the i18n properties for the new texts. 
+
+```txt
+pageTitle = Walkthrough
+panelHeader=Hello World
+```
+
