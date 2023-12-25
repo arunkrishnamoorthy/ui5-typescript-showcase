@@ -14,7 +14,16 @@
                 ""
             ],
             "fallbackLocale": ""
-        }  
+        },
+        "dataSources": {
+			"invoiceRemote": {
+				"uri": "V2/Northwind/Northwind.svc/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
+				}
+			}
+		}
     },
     "sap.ui": {
         "technology": "UI5",
@@ -61,9 +70,7 @@
                 }
             },
             "invoice": {
-                "type": "sap.ui.model.json.JSONModel",
-                "uri": "model/localInvoices.json",
-                "settings": {}
+                "dataSource": "invoiceRemote"
             }
         }
     }

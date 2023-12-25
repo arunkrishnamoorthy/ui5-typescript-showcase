@@ -1787,4 +1787,56 @@ To enable grouping, set the group property.
     >
 ```
 
+#### Step 5: Remote OData Service 
 
+In this step we will use the odata service `https://services.odata.org/V2/Northwind/Northwind.svc/`. 
+
+To install the dependency, add ui5-middleware-simpleproxy.
+
+```sh
+npm i -D ui5-middleware-simpleproxy
+```
+
+In the UI5 yaml, file add the proxy in the server section.
+
+```yaml
+  - name: ui5-middleware-simpleproxy
+    afterMiddleware: compression
+    mountPath: /V2
+    configuration:
+      baseUri: "https://services.odata.org"
+```
+
+In the manifest add the data source to the odata url in the `sap.app` section.
+
+```yaml
+        "dataSources": {
+			"invoiceRemote": {
+				"uri": "V2/Northwind/Northwind.svc/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
+				}
+			}
+		}
+```
+
+In the `sap.ui5` add the models referring the data source. Change the invoice model to refer to the odata service.
+
+```yaml
+            "invoice": {
+                "dataSource": "invoiceRemote"
+            }
+```
+
+Change the OData property name to ship name in the list binding .
+
+```xml
+    <List 
+        id="invoiceList"
+        headerText="{i18n>invoiceListTitle}"
+        class="sapUiResponsiveMargin"
+        width="auto"
+        items="{ path: 'invoice>/Invoices' , sorter: { path: 'ShipName', descending: false , group: true } }"
+    >
+```
