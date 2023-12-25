@@ -1,4 +1,4 @@
-<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="ui5.walkthrough.controller.InvoiceList">
     <List 
         headerText="{i18n>invoiceListTitle}"
         class="sapUiResponsiveMargin"
