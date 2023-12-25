@@ -2145,3 +2145,20 @@ void Promise.all([
 })
 ```
 
+
+#### Step 28-OPA Testing 
+
+
+#### Step 29 - Debugging Tools 
+
+To open, the diagnostics tool. 
+
+use the option ctrl + option + shift + s. 
+
+To open technical information dialog. 
+
+use the option ctrl + option + shift + p. 
+
+
+
+
