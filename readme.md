@@ -854,3 +854,36 @@ pageTitle = Walkthrough
 panelHeader=Hello World
 ```
 
+#### Shell Container. 
+
+In this exerices we will wrap the root of the application inside the Shell container. This will act as a outermost control and automatically wraps the component in so called letterbox if the screen size is larger than a certain width. 
+
+This is not requried for the application that runs in the fiori launchpad, as the launchpad has shell wrapped around a component by default. 
+
+```
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    controllerName="ui5.walkthrough.controller.App"
+    displayBlock="true"
+>
+    <Shell>
+        <App>
+            <pages>
+                <Page title="{i18n>pageTitle}">
+                    <Panel headerText="{i18n>panelHeader}">
+                        <Button
+                            text="{i18n>buttonText}"
+                            press="onPress"
+                        />
+                        <Input
+                            value="{/recipient/name}"
+                            valueLiveUpdate="true"
+                        />
+                    </Panel>
+                </Page>
+            </pages>
+        </App>
+    </Shell>
+</mvc:View>
+```
