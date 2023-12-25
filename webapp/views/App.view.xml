@@ -8,15 +8,18 @@
         <App>
             <pages>
                 <Page title="{i18n>pageTitle}">
-                    <Panel headerText="{i18n>panelHeader}">
+                    <Panel headerText="{i18n>panelHeader}" class="sapUiResponsiveMargin" width="auto">
                         <Button
                             text="{i18n>buttonText}"
                             press="onPress"
+                            class="sapUiSmallMarginEnd"
                         />
                         <Input
                             value="{/recipient/name}"
                             valueLiveUpdate="true"
+                            width="60%"
                         />
+                        <Text text="Hello {/recipient/name}" class="sapUiSmallMargin" />
                     </Panel>
                 </Page>
             </pages>
