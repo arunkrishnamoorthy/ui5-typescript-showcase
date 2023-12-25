@@ -2023,3 +2023,125 @@ ShipperName in the list binding. While testing Odata server you need to use the 
         items="{ path: 'invoice>/Invoices' , sorter: { path: 'ShipperName', descending: false , group: true } }"
     >
 ```
+
+#### Step 27: QUnit Testing 
+
+In the test folder of the application, add a new folder called unit and create html page for quint and a script to run the test modules. 
+
+The extension of the html file is `*.qunit.html` and the script file as `*.qunit.ts`.
+
+Inside the test folder,create a folder named unit and create html page for  qunit testing. 
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Unit tests for UI5 Walkthrough</title>
+	<meta charset="utf-8">
+
+	<script
+		id="sap-ui-bootstrap"
+		src="../../resources/sap-ui-core.js"
+		data-sap-ui-resourceroots='{
+			"ui5.walkthrough": "../../"
+		}'
+		data-sap-ui-async="true">
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="../../resources/sap/ui/thirdparty/qunit-2.css">
+	<script src="../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="unitTests.qunit.js"></script>
+</head>
+<body>
+	<div id="qunit"/>
+	<div id="qunit-fixture"/>
+</body>
+</html>
+```
+
+Create a script file for Qunit. 
+
+```ts
+QUnit.config.autostart = false;
+
+// Import all the test modules and start the testing. 
+
+void Promise.all([
+
+]).then(() => {
+    QUnit.start();
+})
+```
+
+Here inside this we will import the test modules.
+
+Add a script to run the unit test html page. 
+
+```json
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ui5 serve -o index.html",
+    "start:mock": "ui5 serve -o test/mockServer.html",
+    "start:test": "ui5 serve -o test/unit/unitTests.qunit.html"
+  },
+```
+
+For the formatter function we created in the model/formatter.ts, we will add an unit test. 
+
+Inside the folder test/unit, create a new folder named model and create a new file called formatter.ts and add the test logic there. 
+
+The statusText function in the formatter, requires the resource model. 
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
+import formatter from "ui5/walkthrough/model/formatter";
+
+QUnit.module("Formatting function", {});
+
+QUnit.test("Should return translated texts", (assert) => {
+
+   const resourceModel = new ResourceModel({
+    bundleUrl: sap.ui.require.toUrl("ui5/walkthrough/i18n/i18n.properties"),
+    supportedLocales: [""],
+    fallbackLocale: ""
+   });
+
+   // In the statusText we have function call this.getOwnerComponent().getModel() which returns the resource model. 
+   // to mimick it create a mock function to create replicate this. 
+   const controllerMock = <Controller> <any>{
+        getOwnerComponent() {
+            return {
+                getModel() {
+                    return resourceModel;
+                }
+            }
+        }
+   }
+
+   // Execute formatter statusText module. 
+   const fnFormatter = formatter.statusText.bind(controllerMock);
+
+   // Assert
+   assert.strictEqual(fnFormatter("A"),"New", "The long text for A is new, correct");
+   assert.strictEqual(fnFormatter("B"),"In Progress", "The long text for B is In progress, correct");
+   assert.strictEqual(fnFormatter("C"),"Done", "The long text for C is Done, correct");
+   assert.strictEqual(fnFormatter("Foo"),"Foo", "The long text for Foo  correct");
+});
+```
+
+Add the test module to the unit test script. 
+
+```ts
+QUnit.config.autostart = false;
+
+// Import all the test modules and start the testing. 
+
+void Promise.all([
+    import("ui5/walkthrough/test/unit/model/formatter")
+]).then(() => {
+    QUnit.start();
+})
+```
+
