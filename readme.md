@@ -860,7 +860,7 @@ In this exerices we will wrap the root of the application inside the Shell conta
 
 This is not requried for the application that runs in the fiori launchpad, as the launchpad has shell wrapped around a component by default. 
 
-```
+```xml
 <mvc:View
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
@@ -887,3 +887,20 @@ This is not requried for the application that runs in the fiori launchpad, as th
     </Shell>
 </mvc:View>
 ```
+
+#### Step 13: Paddings and Margins . 
+
+`sapUiResponsiveMargin` - Provide margin on all sides. Apply this class to panel. 
+Add width to panel to restrict the flow to 100%. 
+
+`sapUiSmallMarginEnd` add to button to provide a margin to the right 
+
+set input control width to 60% 
+
+Add a text element and display name. add the `sapUiSmallMargin` to create margin on all sides. 
+
+More details on available standard margins:
+https://sapui5.hana.ondemand.com/#/topic/777168ffe8324873973151dae2356d1c.html
+
+https://sapui5.hana.ondemand.com/#/topic/c71f6df62dae47ca8284310a6f5fc80a
+
