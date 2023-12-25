@@ -1553,3 +1553,126 @@ For more complex scenarios we need to write the formatter functions.
 </ObjectListItem>
 ```
 
+#### Step 22: Custom Formatters
+
+Let's add the status to the object list item. 
+
+```xml
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="ui5.walkthrough.controller.InvoiceList">
+    <List 
+        headerText="{i18n>invoiceListTitle}"
+        class="sapUiResponsiveMargin"
+        width="auto"
+        items="{invoice>/Invoices}"
+    >
+        <items>
+            <ObjectListItem title="{invoice>Quantity} x {invoice>ProductName}"
+                            number="{
+                                parts: [
+                                    'invoice>ExtendedPrice',
+                                    'view>/currency'
+                                ],
+                                type: 'sap.ui.model.type.Currency',
+                                formatOptions: {
+                                    showMeasure: false
+                                }
+                            }"
+                            numberUnit="{view>/currency}"
+                            numberState="{= ${invoice>ExtendedPrice} > 50 ? 'Error' : 'Success' }">
+                <firstStatus>
+                    <ObjectStatus text="{invoice>Status}"></ObjectStatus>
+                </firstStatus>
+            </ObjectListItem>
+        </items>
+    </List>
+</mvc:XMLView>
+```
+This adds the status text with values as 'A' , 'B' and 'C'. Now lets say we want to format it and display in user readable form such as A- New, B- In Progress, C - Done. 
+
+First lets create a translatable text in the i18n properties file. 
+```txt
+statusA = New 
+statusB = In Progress 
+statusC = Done
+```
+
+Let's add a formatter function. In the model folder, create a file named `formatter.ts`
+
+```ts
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
+import Controller from "sap/ui/core/mvc/Controller";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
+
+
+export default {
+
+    statusText: function(this: Controller, status: string ) : string | undefined {
+        const resourceBundle = <ResourceBundle>(<ResourceModel>this.getOwnerComponent()?.getModel("i18n"))?.getResourceBundle();
+        switch(status) {
+            case "A":
+                return resourceBundle.getText("statusA");
+            case "B":
+                return resourceBundle.getText("statusB");
+            case "C":
+                return resourceBundle.getText("statusC");
+        }
+    }
+
+}
+```
+
+Import this new formatter file in the InvoiceList controller and store it in the global variable. 
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import formatter from "../model/formatter";
+/**
+ * @name ui5.walkthrough.controller.InvoiceList
+ */
+export default class InvoiceList extends Controller {
+
+    public formatter = formatter;
+
+    onInit(): void {
+        const currencyModel = new JSONModel({
+            currency: "EUR"
+        });
+        this.getView()?.setModel(currencyModel,"view");
+    }
+}
+```
+
+In the XML view, reference the formatter function in the path binding. 
+
+```xml
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="ui5.walkthrough.controller.InvoiceList">
+    <List 
+        headerText="{i18n>invoiceListTitle}"
+        class="sapUiResponsiveMargin"
+        width="auto"
+        items="{invoice>/Invoices}"
+    >
+        <items>
+            <ObjectListItem title="{invoice>Quantity} x {invoice>ProductName}"
+                            number="{
+                                parts: [
+                                    'invoice>ExtendedPrice',
+                                    'view>/currency'
+                                ],
+                                type: 'sap.ui.model.type.Currency',
+                                formatOptions: {
+                                    showMeasure: false
+                                }
+                            }"
+                            numberUnit="{view>/currency}"
+                            numberState="{= ${invoice>ExtendedPrice} > 50 ? 'Error' : 'Success' }">
+                <firstStatus>
+                    <ObjectStatus text="{ path: 'invoice>Status', formatter: '.formatter.statusText' }"></ObjectStatus>
+                </firstStatus>
+            </ObjectListItem>
+        </items>
+    </List>
+</mvc:XMLView>
+```
+
