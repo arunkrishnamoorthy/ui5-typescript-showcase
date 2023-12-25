@@ -8,19 +8,12 @@ import XMLView from "sap/ui/core/mvc/XMLView";
 export default class Component extends UIComponent {
 
     public static metadata = {
-        "interfaces": ["sap.ui.core.IAsyncContentCreation"]
+        "interfaces": ["sap.ui.core.IAsyncContentCreation"],
+        "manifest": "json"
     }
 
     onInit(): void {
         // call superclass init 
         super.init();
     }
-
-    createContent(): Control | Promise<Control | null> | null {
-        return XMLView.create({
-            "viewName": "ui5.walkthrough.views.App",
-            "id": "app"
-        })
-    }
-
 }

@@ -612,3 +612,204 @@ new ComponentContainer({
 
 Now visually there won't be any change, but we are using the component to dispaly the contents. 
 
+#### Step 10: Application Descriptors 
+
+The fiori launchpad uses the application container (Component) and instantiates the app without having the need to use index.html page.  Instead of html file, the descriptor(manifest.json) will be parsed and component is loaded into html page. 
+
+We can use the descriptors to instantiate models, resource bundles etc. 
+
+In the sap.app section of manifest, add the title and description.
+
+```json
+{
+    "_version": "1.60.0",
+    "sap.app" : {
+        "id": "ui5.walkthrough",
+        "type": "application",
+        "title": "UI5 Walkthrough",
+        "description": "UI5 walkthrough description",
+        "applicationVersion": {
+            "version": "1.0.0"
+        }
+    }
+}
+```
+
+These descriptor information for the title will be used in the fiori launchpad. To translate the app title and app description. Add the texts in the i18n.properties files and reference it in the manifest.json file using the handlebar syntax. 
+
+```txt
+buttonText = Say Hello 
+messageText = Hello {0}
+
+appTitle = UI5 Walkthrough 
+appDescription = UI5 Walkthrough description
+```
+
+In the manifest, use the handlerbar syntax `{{binding}}`. This by default references to the resource model. 
+This system is different from the data binding syntax used in the view. The handlebar syntax only works in the manifest.json file. 
+
+```json
+{
+    "_version": "1.60.0",
+    "sap.app" : {
+        "id": "ui5.walkthrough",
+        "type": "application",
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "applicationVersion": {
+            "version": "1.0.0"
+        }
+    }
+}
+```
+
+Earlier, we created the resource model , inside the controller, now this step can be added to the manifest and the model get instantiated when the ui5 application starts. update the sap.app section of the manifest with resource bundle information. 
+
+```json
+{
+    "_version": "1.60.0",
+    "sap.app" : {
+        "id": "ui5.walkthrough",
+        "type": "application",
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "applicationVersion": {
+            "version": "1.0.0"
+        },
+        "i18n": {
+            "bundleName": "ui5.walkthrough.i18n.i18n",
+            "supportedLocales": [
+                ""
+            ],
+            "fallbackLocale": ""
+        }  
+    }
+}
+```
+
+This only references the i18n file location to the application, the model instantiation part will follow later in the settings sap.ui5. 
+
+bundleName -> references resource bundle file. File is referenced using the dot.notation. 
+supportedLocales -> defines array of supported languages, eg. en_GB, en or de.. In this app only i18n is used so it is left blank. But adding this locales helps in controlling the fallback chain and prevent uncessary and potenitally failing requests. 
+
+fallbackLocale -> specifies the fallback locale, by default set to en. 
+
+
+In addition to sap.app, there are two other namespaces. sap.ui and sap.ui5. 
+
+First lets add the sap.ui namepsace in the manifest. The sap.ui namespace contains the following.
+
+1. technology -specify the technology used. its value is UI5. 
+2. deviceTypes(mandatory) - Its is an object containing three boolean properties, Desktop, Table, Mobile. Setting true to these property indicate that the application is designed for the specific device type. By configuring this we ensure the app is optimized for specific device types. 
+
+```json
+"sap.ui": {
+        "technology": "UI5",
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+```
+
+In the sap.ui5 the most important parameters are. 
+
+1. dependencies (mandatory) - 
+    minUI5Version - minimum version of UI5 rrequired by the component. 
+    libs -> declare the lib dependencies here to benefit from the asynchronous loading. We can set the parameter lazy to true to enable lazy loading of library. if app requires requires a min version of library to be loaded. We ncan specify minVersion as well. 
+
+2. rootView -> root view of the application. This view is displayed when the component is loaded. 
+        viewName -> view file name is referenced in dot notation. 
+        type -> Type of the view (default: XML)
+        id -> id for the view. 
+        async -> load the view asynchronously.
+
+3. models -> defines the global model that is controlled by the lifecycle of the application. The models defined here are available throughout the application. each model has a unique key. default model is represented by "". 
+
+4. Content densities, provide option to enable/disable content densities for cozy and compact mode.
+
+the sap.ui5 section would look like this.
+
+```json
+    "sap.ui5": {
+        "dependencies": {
+            "minUI5Version": "1.120.0",
+            "libs": {
+                "sap.ui.core": { "minVersion": "1.120.0"},
+                "sap.m": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": false
+        },
+        "rootView": {
+            "viewName": "ui5.walkthrough.views.App",
+            "type": "XML",
+            "id": "app",
+            "async": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resources.ResourceModel",
+                "settings": {
+                    "bundleName": "ui5.walkthrough.i18n.i18n",
+                    "supportedLocales": [
+
+                    ],
+                    "fallbackLocale": ""
+                }
+            }
+        }
+    }
+```
+
+in the component file, we can go ahead and instruct the componet to use the manifest by setting the manifest property in the metadata to true. 
+
+```ts
+import Control from "sap/ui/core/Control";
+import UIComponent from "sap/ui/core/UIComponent";
+import XMLView from "sap/ui/core/mvc/XMLView";
+
+/**
+ * @namespace ui5.walkthrough
+ */
+export default class Component extends UIComponent {
+
+    public static metadata = {
+        "interfaces": ["sap.ui.core.IAsyncContentCreation"],
+        "manifest": "json"
+    }
+
+    onInit(): void {
+        // call superclass init 
+        super.init();
+    }
+}
+```
+
+From the controller file, i have removed the logic that instantiates the resource model. 
+
+```js
+    onInit(): void {
+        const data = {
+            recipient: {
+                name : "Ricky"
+            }
+        };
+        const model = new JSONModel(data);
+        this.getView()?.setModel(model);
+
+        // const resourceModel = new ResourceModel({
+        //     bundleName: "ui5.walkthrough.i18n.i18n"
+        // });
+        // this.getView()?.setModel(resourceModel,"i18n");
+    }
+
+```
+
+now that we specified the root view in the manifest we no longer need to create content of the app manually, we will use a simple and straight forward approach to add the component in index.html. This will only be used when executing index.html page. the fiori launchpad will use the Component.ts and manifest.json to render the component. 
+
+In the bootstrapping script, do the changes to remove the index module and load the Component support from sap.ui.core. 
+
