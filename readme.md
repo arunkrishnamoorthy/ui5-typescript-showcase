@@ -521,3 +521,94 @@ Notes:
 4. Bundle values can contains place holder like {0}, {1}, .. and so on. 
 5. Do not concatenate strings, always use placeholders
 6. Use unicode escape sequence for special characters. 
+
+#### Step 9: Component configuration 
+
+Components are independent and reusable parts. it encapsulates all the UI assets from the index.html page. 
+
+In the webapp folder create a file named `Component.ts`. This file is commonly referred as `Component Controller`. The controller of the `mvc` architecture.  The name of the file has to `Component`. it must not be changed. 
+
+A Component has unique namespace synonymous with the application namespace. earlier in the manifest.js we provided application namespace as `ui5.walkthrough` and the same will be used in the Component. 
+
+We define component by extending standard component `sap.ui.core.UIComponent`.
+
+```ts
+import UIComponent from "sap/ui/core/UIComponent";
+/**
+ * @namespace ui5.walkthrough
+ */
+export default class Component extends UIComponent {
+    public static metadata = {
+    }
+    onInit(): void {       
+    }
+}
+```
+
+It is recommended to implement the interface `sap/ui/core/IAsyncContentCreation` in the `interfaces` settings of the manifest. 
+This allows the component to be generated asynchronously. 
+
+```ts
+import UIComponent from "sap/ui/core/UIComponent";
+/**
+ * @namespace ui5.walkthrough
+ */
+export default class Component extends UIComponent {
+    public static metadata = {
+        "interfaces": ["sap.ui.core.IAsyncContentCreation"]
+    }
+    onInit(): void {   
+    }
+}
+```
+
+Call the `createContent` hook of the component and add the xml view as the content of the component. 
+
+```ts
+import Control from "sap/ui/core/Control";
+import UIComponent from "sap/ui/core/UIComponent";
+import XMLView from "sap/ui/core/mvc/XMLView";
+
+/**
+ * @namespace ui5.walkthrough
+ */
+export default class Component extends UIComponent {
+
+    public static metadata = {
+        "interfaces": ["sap.ui.core.IAsyncContentCreation"]
+    }
+
+    onInit(): void {
+        // call superclass init 
+        super.init();
+    }
+
+    createContent(): Control | Promise<Control | null> | null {
+        return XMLView.create({
+            "viewName": "ui5.walkthrough.views.App",
+            "id": "app"
+        })
+    }
+}
+```
+
+>Note: i left the model logic in the controller itself, if required will change it later. 
+
+
+Finally, to dispaly the component in the output, replace the logic in the index.ts file. 
+Using the Component Container class to initalize and place the component. 
+
+```ts
+import ComponentContainer from "sap/ui/core/ComponentContainer";
+
+new ComponentContainer({
+    name: "ui5.walkthrough",
+    settings: {
+        id  : "walkthroughts"
+    },
+    async: true
+}).placeAt("content");
+```
+
+Now visually there won't be any change, but we are using the component to dispaly the contents. 
+
