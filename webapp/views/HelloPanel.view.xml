@@ -12,6 +12,7 @@
         <Button
             text="{i18n>buttonTextWithDialog}"
             press="onPressWithDialog"
+            icon="sap-icon://hello-world"
             class="sapUiSmallMarginEnd myCustomButton"
         />
         <Button
