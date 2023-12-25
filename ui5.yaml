@@ -21,3 +21,8 @@ server:
     afterMiddleware: compression
   - name: ui5-middleware-livereload
     afterMiddleware: compression
+  - name: ui5-middleware-simpleproxy
+    afterMiddleware: compression
+    mountPath: /V2
+    configuration:
+      baseUri: "https://services.odata.org"
