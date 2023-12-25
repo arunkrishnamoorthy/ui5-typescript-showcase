@@ -1270,3 +1270,35 @@ export default class HelloPanel extends Controller {
 }
 ```
 
+
+#### Step 17: Fragment callbacks
+
+In this step, we will add some interation to the dialogs. 
+
+Add a text for close button in the i18n file. 
+
+```txt
+dialogClose = Ok
+```
+
+In the xml for the fragment add the button with the text okay to close the dialog. 
+
+```xml 
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
+    <Dialog id="helloDialog" title="Hello {/recipient/name}">
+        <buttons>
+            <Button text="{i18n>dialogClose}" press="onDialogClose" />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>
+```
+
+Implement the event handler in the controller where the fragment is used. Get the dialog by ID and trigger the close.
+
+```ts
+    onDialogClose(): void {
+        (<Dialog>this.byId("helloDialog")).close();
+    }
+```
+
+
