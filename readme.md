@@ -1335,3 +1335,143 @@ Add icon to the content region of Dialog.
     </Dialog>
 </core:FragmentDefinition>
 ```
+
+#### Step 19: Aggregation binding
+
+In the application, add a folder named `model` and add a list of sample invoices to it by adding a file `localInvoices`. 
+
+```json
+{
+    "Invoices": [
+        {
+            "ProductName": "Pineapple",
+            "Quantity": 21,
+            "ExtendedPrice": 87.2,
+            "ShipperName": "Fun Inc.",
+            "ShippedDate": "2015-04-01T00:00:00",
+            "Status": "A"
+        },
+        {
+            "ProductName": "Milk",
+            "Quantity": 4,
+            "ExtendedPrice": 10,
+            "ShipperName": "ACME",
+            "ShippedDate": "2015-02-18T00:00:00",
+            "Status": "B"
+        },
+        {
+            "ProductName": "Canned Beans",
+            "Quantity": 3,
+            "ExtendedPrice": 6.85,
+            "ShipperName": "ACME",
+            "ShippedDate": "2015-03-02T00:00:00",
+            "Status": "B"
+        },
+        {
+            "ProductName": "Salad",
+            "Quantity": 2,
+            "ExtendedPrice": 8.8,
+            "ShipperName": "ACME",
+            "ShippedDate": "2015-04-12T00:00:00",
+            "Status": "C"
+        },
+        {
+            "ProductName": "Bread",
+            "Quantity": 1,
+            "ExtendedPrice": 2.71,
+            "ShipperName": "Fun Inc.",
+            "ShippedDate": "2015-01-27T00:00:00",
+            "Status": "A"
+        }
+    ]
+}
+```
+
+Construct a model in the manifest to load the json data. 
+
+In the sap.ui5 section of the manifest add a new model in the models section. 
+
+```json
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "ui5.walkthrough.i18n.i18n",
+                    "supportedLocales": [
+
+                    ],
+                    "fallbackLocale": ""
+                }
+            },
+            "invoice": {
+                "type": "sap.ui.model.json.JSONModel",
+                "uri": "model/localInvoices.json",
+                "settings": {}
+            }
+        }
+```
+
+In the i18n folder, create a text for the Invoice title. 
+
+```txt
+invoiceListTitle = Invoices
+```
+
+Create a new view called InvoiceList and add the List control to display the invoices. We don't need the controller yet as we are not adding any logic, yet we will still create them. 
+
+File: `InvoiceList.view.xml`
+
+```xml
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="ui5.walkthrough.controller.InvoiceList">
+    <List 
+        headerText="{i18n>invoiceListTitle}"
+        class="sapUiResponsiveMargin"
+        width="auto"
+        items="{invoice>/Invoices}"
+    >
+        <items>
+            <ObjectListItem title="{invoice>Quantity} x {invoice>ProductName}"></ObjectListItem>
+        </items>
+    </List>
+</mvc:XMLView>
+```
+
+File: `InvoiceList.controller.ts` (optional for this step)
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+
+/**
+ * @name ui5.walkthrough.controller.InvoiceList
+ */
+export default class InvoiceList extends Controller {
+
+    onInit(): void {
+        
+    }
+}
+```
+
+Then add the Invoice List view to the main App view. 
+
+File: `App.view.xml`
+
+```xml
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    controllerName="ui5.walkthrough.controller.App"
+    displayBlock="true"
+>
+    <Shell>
+        <App class="myAppDemoWT">
+            <pages>
+                <Page title="{i18n>pageTitle}">
+                    <mvc:XMLView viewName="ui5.walkthrough.views.HelloPanel"></mvc:XMLView>
+                    <mvc:XMLView viewName="ui5.walkthrough.views.InvoiceList"></mvc:XMLView>
+                </Page>
+            </pages>
+        </App>
+    </Shell>
+</mvc:View>
+```
