@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ui5 serve -o index.html",
-    "start:mock": "ui5 serve -o test/mockServer.html"
+    "start:mock": "ui5 serve -o test/mockServer.html",
+    "start:test": "ui5 serve -o test/unit/unitTests.qunit.html"
   },
   "repository": {
     "type": "git",
