@@ -1761,3 +1761,30 @@ export default class InvoiceList extends Controller {
 }
 ```
 
+#### Step 24: Sorting and Grouping. 
+
+In the listbinding of the List control, change the binding to path binding and specify the sorter function. 
+
+```xml
+    <List 
+        id="invoiceList"
+        headerText="{i18n>invoiceListTitle}"
+        class="sapUiResponsiveMargin"
+        width="auto"
+        items="{ path: 'invoice>/Invoices' , sorter: { path: 'ShipperName', descending: false } }"
+    >
+```
+
+To enable grouping, set the group property. 
+
+```xml
+    <List 
+        id="invoiceList"
+        headerText="{i18n>invoiceListTitle}"
+        class="sapUiResponsiveMargin"
+        width="auto"
+        items="{ path: 'invoice>/Invoices' , sorter: { path: 'ShipperName', descending: false , group: true } }"
+    >
+```
+
+
