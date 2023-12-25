@@ -1,10 +1,21 @@
 <mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="ui5.walkthrough.controller.InvoiceList">
     <List 
+        id="invoiceList"
         headerText="{i18n>invoiceListTitle}"
         class="sapUiResponsiveMargin"
         width="auto"
         items="{invoice>/Invoices}"
     >
+        <headerToolbar>
+            <Toolbar>
+                <Title text="{i18n>invoiceListTitle}"></Title>
+                <ToolbarSpacer></ToolbarSpacer>
+                <SearchField 
+                    width="50%"
+                    search=".onFilterInvoices"
+                ></SearchField>
+            </Toolbar>
+        </headerToolbar>
         <items>
             <ObjectListItem title="{invoice>Quantity} x {invoice>ProductName}"
                             number="{
