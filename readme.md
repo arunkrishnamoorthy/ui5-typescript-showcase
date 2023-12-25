@@ -1840,3 +1840,186 @@ Change the OData property name to ship name in the list binding .
         items="{ path: 'invoice>/Invoices' , sorter: { path: 'ShipName', descending: false , group: true } }"
     >
 ```
+
+#### Step 26: Mock Server 
+
+Mock server simulate the back end system than just loading the data.
+
+Create a folder name `localService` and add an metadata xml file.
+
+```xml
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+	<edmx:DataServices m:DataServiceVersion="1.0" m:MaxDataServiceVersion="3.0"
+			xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+		<Schema Namespace="NorthwindModel" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Invoice">
+				<Key>
+					<PropertyRef Name="ProductName"/>
+					<PropertyRef Name="Quantity"/>
+					<PropertyRef Name="ShipperName"/>
+				</Key>
+				<Property Name="ShipperName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false"
+							Unicode="true"/>
+				<Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false"
+							Unicode="true"/>
+				<Property Name="Quantity" Type="Edm.Int16" Nullable="false"/>
+				<Property Name="ExtendedPrice" Type="Edm.Decimal" Precision="19" Scale="4"/>
+				<Property Name="Status" Type="Edm.String" Nullable="false" MaxLength="1" FixedLength="false"
+							Unicode="true"/>
+			</EntityType>
+		</Schema>
+		<Schema Namespace="ODataWebV2.Northwind.Model" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityContainer Name="NorthwindEntities" m:IsDefaultEntityContainer="true" p6:LazyLoadingEnabled="true"
+					xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+				<EntitySet Name="Invoices" EntityType="NorthwindModel.Invoice"/>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
+```
+
+Inside the localService, create a folder named mockdata and add the json file containing data for the entityset. The name of the json file has to be that of entity name.  For example, for Invoices entity, you create a file named Invoices.json
+
+```json
+[
+  {
+	"ProductName": "Pineapple",
+	"Quantity": 21,
+	"ExtendedPrice": 87.2,
+	"ShipperName": "Fun Inc.",
+	"ShippedDate": "2015-04-01T00:00:00",
+	"Status": "A"
+  },
+  {
+	"ProductName": "Milk",
+	"Quantity": 4,
+	"ExtendedPrice": 10,
+	"ShipperName": "ACME",
+	"ShippedDate": "2015-02-18T00:00:00",
+	"Status": "B"
+  },
+  {
+	"ProductName": "Canned Beans",
+	"Quantity": 3,
+	"ExtendedPrice": 6.85,
+	"ShipperName": "ACME",
+	"ShippedDate": "2015-03-02T00:00:00",
+	"Status": "B"
+  },
+  {
+	"ProductName": "Salad",
+	"Quantity": 2,
+	"ExtendedPrice": 8.8,
+	"ShipperName": "ACME",
+	"ShippedDate": "2015-04-12T00:00:00",
+	"Status": "C"
+  },
+  {
+	"ProductName": "Bread",
+	"Quantity": 1,
+	"ExtendedPrice": 2.71,
+	"ShipperName": "Fun Inc.",
+	"ShippedDate": "2015-01-27T00:00:00",
+	"Status": "A"
+  }
+]
+```
+
+Inside the localservice folder, create a file named mockserver.ts. 
+
+```ts
+import UriParameters from "sap/base/util/UriParameters"
+import MockServer from "sap/ui/core/util/MockServer"
+
+export default {
+
+    init : function() {
+        const mockServer = new MockServer({
+            rootUri: sap.ui.require.toUrl("ui5/walkthrough/V2/Northwind/Northwind.svc/")
+        })
+        const uriParameters = new UriParameters(window.location.href);
+
+        MockServer.config({
+            autoRespond: true,
+            autoRespondAfter: parseInt(uriParameters.get("serverDelay") || "500")
+        })
+
+        const path = sap.ui.require.toUrl("ui5/walkthrough/localService");
+        mockServer.simulate(path + "/metadata.xml", path + "/mockdata");
+
+        mockServer.start();
+    }
+
+}
+```
+
+Create a folder named `test` within which we will initialize and a html page to start the application with 
+`mockserver`.
+
+Create a html file named mockServer.html in the test folder and copy the content of existing index.html page to the mockServer.html page. 
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI5-Typescript</title>
+    <script
+		id="sap-ui-bootstrap"
+		src="../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_horizon"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-async="true"
+		data-sap-ui-onInit="module:ui5/walkthrough/test/initMockServer"
+		data-sap-ui-resourceroots='{
+			"ui5.walkthrough": "../"
+		}'>
+	</script>
+</head>
+<body>
+    <div id="content" class="sapUiBody">
+		<div data-sap-ui-component data-name="ui5.walkthrough" data-id="container" data-settings='{ "id": "walkthrough" }'></div>
+	</div>
+</body>
+</html>
+```
+
+replace the property of the module to be called after bootstrapping to the mockserver. 
+```
+data-sap-ui-oninit="module:ui5/walkthrough/test/initMockServer"
+```
+
+Now lets go ahead and create the initMockServer file in the test folder and initialize the mockserver. 
+
+```ts
+import mockserver from "../localService/mockserver";
+mockserver.init();
+import("sap/ui/core/ComponentSupport");
+```
+
+Add a script in the package.json to server the mockServer.html. 
+
+```json
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ui5 serve -o index.html",
+    "start:mock": "ui5 serve -o test/mockServer.html"
+  },
+```
+
+The script start will start the application in the real time and start:mock will start using the mock server. 
+
+Note: there is a mistake here, in the metadata file the shipper name is provided as ShipperName, but in the odata v2 from 
+northwind it is ShipName, due to mistach, it doesnt work in the mock server.  For testing sake i have updated the property to 
+ShipperName in the list binding. While testing Odata server you need to use the Sorter name as ShipName. I Will fix this detail later in this documentation.
+
+```xml
+<List 
+        id="invoiceList"
+        headerText="{i18n>invoiceListTitle}"
+        class="sapUiResponsiveMargin"
+        width="auto"
+        items="{ path: 'invoice>/Invoices' , sorter: { path: 'ShipperName', descending: false , group: true } }"
+    >
+```
