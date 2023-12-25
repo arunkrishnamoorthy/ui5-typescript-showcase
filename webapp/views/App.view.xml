@@ -4,20 +4,22 @@
     controllerName="ui5.walkthrough.controller.App"
     displayBlock="true"
 >
-    <App>
-        <pages>
-            <Page title="{i18n>pageTitle}">
-                <Panel headerText="{i18n>panelHeader}">
-                    <Button
-                        text="{i18n>buttonText}"
-                        press="onPress"
-                    />
-                    <Input
-                        value="{/recipient/name}"
-                        valueLiveUpdate="true"
-                    />
-                </Panel>
-            </Page>
-        </pages>
-    </App>
+    <Shell>
+        <App>
+            <pages>
+                <Page title="{i18n>pageTitle}">
+                    <Panel headerText="{i18n>panelHeader}">
+                        <Button
+                            text="{i18n>buttonText}"
+                            press="onPress"
+                        />
+                        <Input
+                            value="{/recipient/name}"
+                            valueLiveUpdate="true"
+                        />
+                    </Panel>
+                </Page>
+            </pages>
+        </App>
+    </Shell>
 </mvc:View>
