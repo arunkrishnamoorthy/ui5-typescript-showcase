@@ -9,6 +9,7 @@
             <pages>
                 <Page title="{i18n>pageTitle}">
                     <mvc:XMLView viewName="ui5.walkthrough.views.HelloPanel"></mvc:XMLView>
+                    <mvc:XMLView viewName="ui5.walkthrough.views.InvoiceList"></mvc:XMLView>
                 </Page>
             </pages>
         </App>
