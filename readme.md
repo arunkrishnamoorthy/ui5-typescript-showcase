@@ -1475,3 +1475,58 @@ File: `App.view.xml`
     </Shell>
 </mvc:View>
 ```
+
+#### Step 20: Data Types 
+
+in this step we will introduce the data type in the model binding. In the controller, first let us construct a JSON model that has the currency value. 
+
+File: `InvoiceList.controller.ts`
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import JSONModel from "sap/ui/model/json/JSONModel";
+
+/**
+ * @name ui5.walkthrough.controller.InvoiceList
+ */
+export default class InvoiceList extends Controller {
+
+    onInit(): void {
+        const currencyModel = new JSONModel({
+            currency: "EUR"
+        });
+        this.getView()?.setModel(currencyModel,"view");
+    }
+}
+```
+
+In the invoice list view, add the binding for the number attribute of the Object List Item. 
+
+In this step we perfrom parts binding to give information from two different models to the control.
+
+```xml
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="ui5.walkthrough.controller.InvoiceList">
+    <List 
+        headerText="{i18n>invoiceListTitle}"
+        class="sapUiResponsiveMargin"
+        width="auto"
+        items="{invoice>/Invoices}"
+    >
+        <items>
+            <ObjectListItem title="{invoice>Quantity} x {invoice>ProductName}"
+                            number="{
+                                parts: [
+                                    'invoice>ExtendedPrice',
+                                    'view>/currency'
+                                ],
+                                type: 'sap.ui.model.type.Currency',
+                                formatOptions: {
+                                    showMeasure: false
+                                }
+                            }"
+                            numberUnit="{view>/currency}"
+            ></ObjectListItem>
+        </items>
+    </List>
+</mvc:XMLView>
+```
