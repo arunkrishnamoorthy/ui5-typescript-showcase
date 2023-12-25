@@ -1301,4 +1301,37 @@ Implement the event handler in the controller where the fragment is used. Get th
     }
 ```
 
+#### Step 18: Icons 
 
+SAP UI5 by default comes with a specific set of icons. You can find them in the icon explorer. 
+
+The icons are referenced in the xml views with the prefix "sap-icon://<name of the icon>"
+
+Add icon to the button that opens dialog.
+
+```xml
+        <Button
+            text="{i18n>buttonTextWithDialog}"
+            press="onPressWithDialog"
+            icon="sap-icon://hello-world"
+            class="sapUiSmallMarginEnd myCustomButton"
+        />
+```
+
+Add icon to the content region of Dialog. 
+
+```xml
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
+    <Dialog id="helloDialog" title="Hello {/recipient/name}">
+        <content>
+            <core:Icon src="sap-icon://hello-world"
+                        size="8rem"
+                        class="sapUiMediumMargin">
+            </core:Icon>
+        </content>
+        <buttons>
+            <Button text="{i18n>dialogClose}" press="onDialogClose" />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>
+```
