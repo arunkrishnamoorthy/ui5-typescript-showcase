@@ -984,3 +984,115 @@ reference: https://openui5nightly.hana.ondemand.com/topic/ea08f53503da42c19afd34
     <Text text="Hello {/recipient/name}" class="sapUiSmallMargin myCustomText sapThemeHighlight-asColor" />
 ```
 
+#### Step 15: Nested Views 
+
+At the end of this step, the layout will still remain the same. We are going to take the panel content of the App view 
+and move it into a different view and embed the output here. 
+
+Introduce a new view in the application.
+views -> HelloPanel.view.xml 
+controller -> HelloPanel.controller.ts
+
+File: `HelloPanel.view.xml`
+
+```xml 
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    controllerName="ui5.walkthrough.controller.HelloPanel"
+    displayBlock="true"
+>
+    <Panel
+        headerText="{i18n>panelHeader}"
+        class="sapUiResponsiveMargin"
+        width="auto"
+    >
+        <Button
+            text="{i18n>buttonText}"
+            press="onPress"
+            class="sapUiSmallMarginEnd myCustomButton"
+        />
+        <Input
+            value="{/recipient/name}"
+            valueLiveUpdate="true"
+            width="60%"
+        />
+        <Text
+            text="Hello {/recipient/name}"
+            class="sapUiSmallMargin myCustomText sapThemeHighlight-asColor"
+        />
+    </Panel>
+</mvc:View>
+```
+
+File: `HelloPanel.controller.ts`
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import MessageToast from "sap/m/MessageToast";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
+
+/**
+ * @name ui5.walkthrough.controller.HelloPanel
+ */
+export default class HelloPanel extends Controller {
+
+    onInit(): void {
+        const data = {
+            recipient: {
+                name : "Ricky"
+            }
+        };
+        const model = new JSONModel(data);
+        this.getView()?.setModel(model);
+    }
+
+
+    onPress(): void {
+        const recipient = (<JSONModel>this.getView()?.getModel())?.getProperty('/recipient/name');
+        const resourceBundle = <ResourceBundle>(<ResourceModel>this.getView()?.getModel("i18n")).getResourceBundle();
+        const message = resourceBundle.getText("messageText", [recipient]) || "no text defined";
+        MessageToast.show(message);              
+    }
+}
+```
+
+File: `App.controller.ts`
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+
+/**
+ * @name ui5.walkthrough.controller.App
+ */
+export default class AppController extends Controller {
+
+    onInit(): void {}
+     
+}
+```
+
+File: `App.view.xml`
+
+```xml
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    controllerName="ui5.walkthrough.controller.App"
+    displayBlock="true"
+>
+    <Shell>
+        <App class="myAppDemoWT">
+            <pages>
+                <Page title="{i18n>pageTitle}">
+                    <mvc:XMLView viewName="ui5.walkthrough.views.HelloPanel"></mvc:XMLView>
+                </Page>
+            </pages>
+        </App>
+    </Shell>
+</mvc:View>
+```
+
+The output still remains the same. We have only modified the content from one view to another and nested the views. 

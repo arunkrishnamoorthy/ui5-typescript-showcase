@@ -8,19 +8,7 @@
         <App class="myAppDemoWT">
             <pages>
                 <Page title="{i18n>pageTitle}">
-                    <Panel headerText="{i18n>panelHeader}" class="sapUiResponsiveMargin" width="auto">
-                        <Button
-                            text="{i18n>buttonText}"
-                            press="onPress"
-                            class="sapUiSmallMarginEnd myCustomButton"
-                        />
-                        <Input
-                            value="{/recipient/name}"
-                            valueLiveUpdate="true"
-                            width="60%"
-                        />
-                        <Text text="Hello {/recipient/name}" class="sapUiSmallMargin myCustomText sapThemeHighlight-asColor" />
-                    </Panel>
+                    <mvc:XMLView viewName="ui5.walkthrough.views.HelloPanel"></mvc:XMLView>
                 </Page>
             </pages>
         </App>
