@@ -1530,3 +1530,26 @@ In this step we perfrom parts binding to give information from two different mod
     </List>
 </mvc:XMLView>
 ```
+
+#### Step 21: Expression Binding
+
+Let say,we wanted to add state to the number in the object list item. If the value is greater than 50 display it in red as error state, else display the value as success in green. This simple expression can be acheived via expression binding. 
+For more complex scenarios we need to write the formatter functions. 
+
+```xml
+ <ObjectListItem title="{invoice>Quantity} x {invoice>ProductName}"
+                            number="{
+                                parts: [
+                                    'invoice>ExtendedPrice',
+                                    'view>/currency'
+                                ],
+                                type: 'sap.ui.model.type.Currency',
+                                formatOptions: {
+                                    showMeasure: false
+                                }
+                            }"
+                            numberUnit="{view>/currency}"
+                            numberState="{= ${invoice>ExtendedPrice} > 50 ? 'Error' : 'Success' }">
+</ObjectListItem>
+```
+
