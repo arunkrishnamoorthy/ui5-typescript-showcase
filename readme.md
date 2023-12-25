@@ -323,3 +323,48 @@ export default class AppController extends Controller {
 }
 ```
 
+#### Step 7: Adding JSON Module. 
+
+In this step we will create a model and bind the data to the view. 
+
+Introduce an UI5 lifecycle method onInit, which is invoked when the controller is created. It is similar to constructor of a class.  Instantiate the JSON model and set a sample data to it. 
+
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import MessageToast from "sap/m/MessageToast";
+import JSONModel from "sap/ui/model/json/JSONModel";
+
+/**
+ * @name ui5.walkthrough.controller.App
+ */
+export default class AppController extends Controller {
+
+    onInit(): void {
+        const data = {
+            recipient: {
+                name : "Ricky"
+            }
+        };
+        const model = new JSONModel(data);
+        this.getView()?.setModel(model);
+    }
+
+
+    onPress(): void {
+        MessageToast.show("This is a message from UI5 message toast");
+    }
+}
+```
+
+In the view, lets add an input control and and bind the data. 
+
+```xml
+<mvc:View
+   xmlns="sap.m"
+   xmlns:mvc="sap.ui.core.mvc"
+   controllerName="ui5.walkthrough.controller.App">
+   <Button text="Hello" press="onPress" />
+   <Input value="Hello {/receipient/name}"></Input>
+</mvc:View>
+```
+
