@@ -904,3 +904,83 @@ https://sapui5.hana.ondemand.com/#/topic/777168ffe8324873973151dae2356d1c.html
 
 https://sapui5.hana.ondemand.com/#/topic/c71f6df62dae47ca8284310a6f5fc80a
 
+
+#### Step 14: Custom CSS Styles
+
+To define custom sytles, in the webapp folder create a folder named `css` and add a file name `style.css` in it.
+
+add the following style class to the file. 
+
+```css
+.myAppDemoWT .myCustomText {
+    display: inline-block;
+    font-weight: bold;
+}
+```
+
+To link the css to the application, in the manifest.json add the reference of the styles in the sap.ui5 section. 
+
+```json
+        "resources": {
+            "css" :[
+                {
+                    "uri": "css/style.css"
+                }
+            ]
+        },
+```
+
+Assign the custom sytle class to the control. 
+
+```xml
+        <App class="myAppDemoWT">
+            <pages>
+                <Page title="{i18n>pageTitle}">
+                    <Panel headerText="{i18n>panelHeader}" class="sapUiResponsiveMargin" width="auto">
+                        <Button
+                            text="{i18n>buttonText}"
+                            press="onPress"
+                            class="sapUiSmallMarginEnd"
+                        />
+                        <Input
+                            value="{/recipient/name}"
+                            valueLiveUpdate="true"
+                            width="60%"
+                        />
+                        <Text text="Hello {/recipient/name}" class="sapUiSmallMargin myCustomText" />
+                    </Panel>
+                </Page>
+            </pages>
+        </App>
+```
+
+For right to left and left to right languages, we can assign custom styles like following. 
+
+```css
+html[dir="ltr"] .myAppDemoWT .myCustomButton.sapMBtn {
+   margin-right: 0.125rem
+}
+
+html[dir="rtl"] .myAppDemoWT .myCustomButton.sapMBtn {
+   margin-left: 0.125rem
+}
+```
+
+Adding the style class to the button.
+
+```xml
+    <Button
+        text="{i18n>buttonText}"
+        press="onPress"
+        class="sapUiSmallMarginEnd myCustomButton"
+    />
+```
+
+You can also add adjustable color from theme parameters. 
+
+reference: https://openui5nightly.hana.ondemand.com/topic/ea08f53503da42c19afd342f4b0c9ec7
+
+```xml
+    <Text text="Hello {/recipient/name}" class="sapUiSmallMargin myCustomText sapThemeHighlight-asColor" />
+```
+
